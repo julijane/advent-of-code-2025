@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/julijane/advent-of-code-2024/aoc"
+	"github.com/julijane/advent-of-code-2025/aoc"
 )
 
 func calc(input *aoc.Input, _, _ bool, _ ...any) (any, any) {

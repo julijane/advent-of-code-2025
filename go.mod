@@ -1,6 +1,6 @@
-module github.com/julijane/advent-of-code-2024
+module github.com/julijane/advent-of-code-2025
 
-go 1.23.3
+go 1.24
 
 require github.com/k0kubun/pp/v3 v3.2.0
 
