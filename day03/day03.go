@@ -1,26 +1,29 @@
 package main
 
 import (
-	"strings"
-
 	"github.com/julijane/advent-of-code-2025/aoc"
 )
 
-func findMaxFrom(digits []string, startPos, digitsStillNeeded int) string {
-	max := "#"
-	var maxpos int
-	for idx := startPos; idx <= len(digits)-digitsStillNeeded; idx++ {
-		if digits[idx] > max {
-			max = digits[idx]
-			maxpos = idx
+func findHighestSequence(inputDigits []int, numDigits int) int {
+	startPos := 0
+	result := 0
+
+	for digit := range numDigits {
+		max := -1
+		maxpos := -1
+
+		for x := startPos; x <= len(inputDigits)-numDigits+digit; x++ {
+			if inputDigits[x] > max {
+				max = inputDigits[x]
+				maxpos = x
+			}
 		}
+
+		startPos = maxpos + 1
+		result = result*10 + max
 	}
 
-	if digitsStillNeeded == 1 {
-		return max
-	}
-
-	return max + findMaxFrom(digits, maxpos+1, digitsStillNeeded-1)
+	return result
 }
 
 func calc(input *aoc.Input, _, _ bool, _ ...any) (any, any) {
@@ -28,10 +31,10 @@ func calc(input *aoc.Input, _, _ bool, _ ...any) (any, any) {
 	part2 := 0
 
 	for _, line := range input.PlainLines() {
-		digits := strings.Split(line, "")
+		digits := aoc.ExtractDigits(line)
 
-		part1 += aoc.Atoi(findMaxFrom(digits, 0, 2))
-		part2 += aoc.Atoi(findMaxFrom(digits, 0, 12))
+		part1 += findHighestSequence(digits, 2)
+		part2 += findHighestSequence(digits, 12)
 	}
 
 	return part1, part2
