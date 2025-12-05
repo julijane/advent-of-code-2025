@@ -4,6 +4,8 @@ type Coordinate struct {
 	X, Y int
 }
 
+type Coordinates []Coordinate
+
 var (
 	DirUL = Coordinate{X: -1, Y: -1}
 	DirU  = Coordinate{X: 0, Y: -1}
@@ -111,7 +113,20 @@ func (c Coordinate) MoveBy(direction int, amount int) Coordinate {
 	return c
 }
 
-type Coordinates []Coordinate
+func (c Coordinate) Adjacent(onlyStraight bool) Coordinates {
+	var dirs []Coordinate
+	if onlyStraight {
+		dirs = DirsStraight
+	} else {
+		dirs = DirsAll
+	}
+
+	adj := Coordinates{}
+	for _, dir := range dirs {
+		adj = append(adj, c.Add(dir))
+	}
+	return adj
+}
 
 func (cs Coordinates) Includes(c Coordinate) bool {
 	for _, test := range cs {

@@ -53,6 +53,18 @@ func NewGridFromStrings(data []string) *Grid {
 	return grid
 }
 
+func (g *Grid) AllCoordinates() Coordinates {
+	coords := Coordinates{}
+
+	for y := 0; y < g.Height; y++ {
+		for x := 0; x < g.Width; x++ {
+			coords = append(coords, Coordinate{X: x, Y: y})
+		}
+	}
+
+	return coords
+}
+
 func (g *Grid) Inside(c Coordinate) bool {
 	return c.X >= 0 && c.X < g.Width && c.Y >= 0 && c.Y < g.Height
 }
@@ -79,6 +91,12 @@ func (g *Grid) Set(c Coordinate, val byte) {
 	}
 }
 
+func (g *Grid) SetAll(coords Coordinates, val byte) {
+	for _, c := range coords {
+		g.Set(c, val)
+	}
+}
+
 func (g *Grid) Find(search byte) Coordinate {
 	for y := 0; y < g.Height; y++ {
 		for x := 0; x < g.Width; x++ {
@@ -91,14 +109,12 @@ func (g *Grid) Find(search byte) Coordinate {
 	return Coordinate{X: -1, Y: -1}
 }
 
-func (g *Grid) FindAll(search byte) Coordinates {
+func (g *Grid) FindAll(search byte, searchFields Coordinates) Coordinates {
 	found := Coordinates{}
 
-	for y := 0; y < g.Height; y++ {
-		for x := 0; x < g.Width; x++ {
-			if g.Data[y][x] == search {
-				found = append(found, Coordinate{X: x, Y: y})
-			}
+	for _, c := range searchFields {
+		if g.Get(c, '.') == search {
+			found = append(found, c)
 		}
 	}
 

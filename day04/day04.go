@@ -4,46 +4,32 @@ import (
 	"github.com/julijane/advent-of-code-2025/aoc"
 )
 
-func getRemovable(g *aoc.Grid) []aoc.Coordinate {
-	removables := []aoc.Coordinate{}
-
-search:
-	for _, c := range g.FindAll('@') {
-		countRolls := 0
-
-		for _, dir := range aoc.DirsAll {
-			if g.Get(c.Add(dir), '.') == '@' {
-				countRolls++
-
-				if countRolls > 3 {
-					continue search
-				}
-			}
-		}
-
-		removables = append(removables, c)
-	}
-
-	return removables
-}
-
 func calc(input *aoc.Input, _, _ bool, _ ...any) (any, any) {
 	part1 := 0
 	part2 := 0
 
 	g := input.Grid()
 
-	removables := getRemovable(g)
-	part1 = len(removables)
+	for {
+		canRemove := aoc.Coordinates{}
 
-	for len(removables) > 0 {
-		part2 += len(removables)
-
-		for _, c := range removables {
-			g.Set(c, '.')
+		for _, c := range g.FindAll('@', g.AllCoordinates()) {
+			rolls := g.FindAll('@', c.Adjacent(false))
+			if len(rolls) < 4 {
+				canRemove = append(canRemove, c)
+			}
+		}
+		if len(canRemove) == 0 {
+			break
 		}
 
-		removables = getRemovable(g)
+		if part1 == 0 {
+			part1 = len(canRemove)
+		}
+
+		part2 += len(canRemove)
+
+		g.SetAll(canRemove, '.')
 	}
 
 	return part1, part2
