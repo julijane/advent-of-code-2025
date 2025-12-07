@@ -1,5 +1,15 @@
 package aoc
 
+type Objects []*Object
+
+func (o *Objects) StartPostions() []int {
+	position := make([]int, 0, len(*o))
+	for _, obj := range *o {
+		position = append(position, obj.left)
+	}
+	return position
+}
+
 // Object represents an object found on a line
 type Object struct {
 	Line        *Line

@@ -12,8 +12,8 @@ type Line struct {
 }
 
 // FindObjects returns a list of objects that match the given regular expression on this Line
-func (l *Line) FindObjects(re string) []*Object {
-	var objects []*Object
+func (l *Line) FindObjects(re string) Objects {
+	var objects Objects
 	matcher := regexp.MustCompile(re)
 
 	matches := matcher.FindAllStringIndex(l.Data, -1)
