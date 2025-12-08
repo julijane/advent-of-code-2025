@@ -7,27 +7,19 @@ import (
 	"github.com/julijane/advent-of-code-2025/aoc"
 )
 
-type pos struct {
-	x          int
-	numReached int
-}
+// Store all current beam positions and how many ways they each were reached
+type positions map[int]int
 
-type positions []pos
-
-func (s *positions) Add(x, numReached int) {
-	for i, p := range *s {
-		if p.x == x {
-			(*s)[i].numReached += numReached
-			return
-		}
-	}
-	*s = append(*s, pos{x: x, numReached: numReached})
+// helper function, just for more clarity/intent in the code
+func (s positions) Add(x, numReached int) {
+	s[x] += numReached
 }
 
 func calc(input *aoc.Input, _, _ bool, _ ...any) (any, any) {
 	part1 := 0
 
-	state := positions{{x: strings.Index(input.Lines[0].Data, "S"), numReached: 1}}
+	state := positions{}
+	state.Add(strings.Index(input.Lines[0].Data, "S"), 1)
 
 	for _, line := range input.Lines[1:] {
 		splitterPosO := line.FindObjects("\\^")
@@ -39,13 +31,13 @@ func calc(input *aoc.Input, _, _ bool, _ ...any) (any, any) {
 
 		newState := positions{}
 
-		for _, s := range state {
-			if slices.Contains(splitterPos, s.x) {
+		for x, numReached := range state {
+			if slices.Contains(splitterPos, x) {
 				part1++
-				newState.Add(s.x-1, s.numReached)
-				newState.Add(s.x+1, s.numReached)
+				newState.Add(x-1, numReached)
+				newState.Add(x+1, numReached)
 			} else {
-				newState.Add(s.x, s.numReached)
+				newState.Add(x, numReached)
 			}
 
 		}
@@ -53,8 +45,8 @@ func calc(input *aoc.Input, _, _ bool, _ ...any) (any, any) {
 	}
 
 	part2 := 0
-	for _, s := range state {
-		part2 += s.numReached
+	for _, numReached := range state {
+		part2 += numReached
 	}
 	return part1, part2
 }
