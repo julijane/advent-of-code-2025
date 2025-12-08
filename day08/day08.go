@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"slices"
 
@@ -16,6 +15,7 @@ func (l *loc) distance(o *loc) float64 {
 	dx := float64(l.x - o.x)
 	dy := float64(l.y - o.y)
 	dz := float64(l.z - o.z)
+
 	return math.Sqrt(dx*dx + dy*dy + dz*dz)
 }
 
@@ -27,16 +27,11 @@ type distance struct {
 type circuit []loc
 
 func calc(input *aoc.Input, _, _ bool, params ...any) (any, any) {
-
 	locations := []loc{}
 
 	for _, line := range input.PlainLines() {
-		var l loc
-		_, err := fmt.Sscanf(line, "%d,%d,%d", &l.x, &l.y, &l.z)
-		if err != nil {
-			continue
-		}
-		locations = append(locations, l)
+		n := aoc.ExtractNumbers(line)
+		locations = append(locations, loc{x: n[0], y: n[1], z: n[2]})
 	}
 
 	distances := []distance{}
@@ -47,15 +42,17 @@ func calc(input *aoc.Input, _, _ bool, params ...any) (any, any) {
 	}
 
 	slices.SortFunc(distances, func(i, j distance) int {
-		if i.d < j.d {
+		switch {
+		case i.d < j.d:
 			return -1
-		} else if i.d > j.d {
+		case i.d > j.d:
 			return 1
+		default:
+			return 0
 		}
-		return 0
 	})
 
-	param := params[0].([]interface{})
+	param := params[0].([]any)
 	numConnections := param[0].(int)
 
 	circuits := []circuit{}
@@ -67,12 +64,14 @@ func calc(input *aoc.Input, _, _ bool, params ...any) (any, any) {
 
 		if i == numConnections {
 			slices.SortFunc(circuits, func(i, j circuit) int {
-				if len(i) > len(j) {
+				switch {
+				case len(i) > len(j):
 					return -1
-				} else if len(i) < len(j) {
+				case len(i) < len(j):
 					return 1
+				default:
+					return 0
 				}
-				return 0
 			})
 
 			part1 = len(circuits[0]) * len(circuits[1]) * len(circuits[2])
@@ -102,7 +101,7 @@ func calc(input *aoc.Input, _, _ bool, params ...any) (any, any) {
 			circuits[circuitContainsA] = append(circuits[circuitContainsA], dist.b)
 		} else {
 			circuits[circuitContainsA] = append(circuits[circuitContainsA], circuits[circuitContainsB]...)
-			circuits = append(circuits[:circuitContainsB], circuits[circuitContainsB+1:]...)
+			circuits = slices.Delete(circuits, circuitContainsB, circuitContainsB+1)
 		}
 
 		if len(circuits[0]) == len(locations) {
