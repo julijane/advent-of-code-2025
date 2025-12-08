@@ -61,7 +61,6 @@ func calc(input *aoc.Input, _, _ bool, params ...any) (any, any) {
 	part2 := 0
 
 	for i, dist := range distances {
-
 		if i == numConnections {
 			slices.SortFunc(circuits, func(i, j circuit) int {
 				switch {
@@ -88,7 +87,6 @@ func calc(input *aoc.Input, _, _ bool, params ...any) (any, any) {
 			if slices.Contains(c, dist.b) {
 				circuitContainsB = i
 			}
-
 		}
 
 		if circuitContainsA == circuitContainsB {
